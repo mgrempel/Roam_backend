@@ -1,11 +1,11 @@
 type NewsPost {
-  id: ID!
+  id: Int!
   title: String!
   content: String!
 }
 
 type User {
-  id:          ID!
+  id:          Int!
   userName:    String!
   password:    String!
   email:       String!
@@ -18,7 +18,7 @@ type User {
 }
 
 type Post {
-  id: ID!
+  id: Int!
   title: String!
   content: String!
   user: User!
