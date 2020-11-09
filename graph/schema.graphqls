@@ -24,7 +24,7 @@ type Post {
   user: User!
 }
 
-type NewUser {
+input NewUser {
   userName:    String!
   password:    String!
   email:       String!
@@ -33,7 +33,7 @@ type NewUser {
   description: String
 }
 
-type NewPost {
+input NewPost {
   title: String!
   content: String!
   UserId: Int!
