@@ -16,7 +16,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const debug bool = true
+const debug bool = false
 
 func init() {
 	if err := godotenv.Load(); err != nil {
@@ -41,7 +41,7 @@ func main() {
 	http.Handle("/query", srv)
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
 func initDB(recreate bool, port string) *gorm.DB {
