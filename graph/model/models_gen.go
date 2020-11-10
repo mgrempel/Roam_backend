@@ -9,12 +9,12 @@ type NewPost struct {
 }
 
 type NewUser struct {
-	UserName    string  `json:"userName"`
-	Password    string  `json:"password"`
-	Email       string  `json:"email"`
-	FirstName   *string `json:"firstName"`
-	LastName    *string `json:"lastName"`
-	Description *string `json:"description"`
+	UserName    string `json:"userName"`
+	Password    string `json:"password"`
+	Email       string `json:"email"`
+	FirstName   string `json:"firstName"`
+	LastName    string `json:"lastName"`
+	Description string `json:"description"`
 }
 
 type NewsPost struct {
@@ -27,6 +27,7 @@ type Post struct {
 	ID      int    `json:"id"`
 	Title   string `json:"title"`
 	Content string `json:"content"`
+	UserID  int    `json:"userId"`
 	User    *User  `json:"user"`
 }
 
@@ -35,10 +36,10 @@ type User struct {
 	UserName    string  `json:"userName"`
 	Password    string  `json:"password"`
 	Email       string  `json:"email"`
-	FirstName   *string `json:"firstName"`
-	LastName    *string `json:"lastName"`
-	Description *string `json:"description"`
-	UUID        *string `json:"uuid"`
+	FirstName   string  `json:"firstName"`
+	LastName    string  `json:"lastName"`
+	Description string  `json:"description"`
+	UUID        string  `json:"uuid"`
 	Posts       []*Post `json:"posts"`
-	Friends     []*User `json:"friends"`
+	Friends     []*User `json:"friends" gorm:"many2many:friendships;association_jointable_foreignkey:friend_id"`
 }

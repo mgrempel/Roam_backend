@@ -9,18 +9,19 @@ type User {
   userName:    String!
   password:    String!
   email:       String!
-  firstName:   String
-  lastName:    String
-  description: String
-  uuid:        String
-  posts:       [Post!]
-  friends:     [User!]
+  firstName:   String!
+  lastName:    String!
+  description: String!
+  uuid:        String!
+  posts:       [Post!]!
+  friends:     [User!]!
 }
 
 type Post {
   id: Int!
   title: String!
   content: String!
+  userId: Int!
   user: User!
 }
 
@@ -28,9 +29,9 @@ input NewUser {
   userName:    String!
   password:    String!
   email:       String!
-  firstName:   String
-  lastName:    String
-  description: String
+  firstName:   String!
+  lastName:    String!
+  description: String!
 }
 
 input NewPost {

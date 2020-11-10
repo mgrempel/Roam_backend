@@ -71,9 +71,12 @@ func initDB(recreate bool, port string) *gorm.DB {
 	if recreate {
 		db.LogMode(true)
 
+		db.DropTableIfExists("friendships")
 		db.DropTableIfExists(&model.Post{}, &model.User{}, &model.NewsPost{})
-		db.CreateTable(&model.Post{}, &model.User{}, &model.NewsPost{})
-		//db.Model(&model.Post{}).AddForeignKey("user_id", "users(id)", "CASCADE", "RESTRICT")
+		db.CreateTable(&model.User{}, &model.Post{}, &model.NewsPost{})
+		db.Model(&model.Post{}).AddForeignKey("user_id", "users(id)", "CASCADE", "RESTRICT")
+		db.Table("friendships").AddForeignKey("user_id", "users(id)", "CASCADE", "RESTRICT")
+		db.Table("friendships").AddForeignKey("friend_id", "users(id)", "CASCADE", "RESTRICT")
 	} else {
 		db.AutoMigrate(&model.Post{}, &model.User{}, &model.NewsPost{})
 	}
