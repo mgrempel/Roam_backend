@@ -11,7 +11,17 @@ import (
 )
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
+	newUser := model.User{
+		UserName:    input.UserName,
+		Password:    input.Password,
+		Email:       input.Email,
+		FirstName:   input.FirstName,
+		LastName:    input.LastName,
+		Description: input.Description}
+
+	r.DB.Create(&newUser)
+
+	return &newUser, nil
 }
 
 func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) (*model.Post, error) {
