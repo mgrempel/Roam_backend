@@ -10,6 +10,7 @@ require (
 	github.com/alecthomas/gocyclo v0.0.0-20150208221726-aa8f8b160214 // indirect
 	github.com/alexkohler/nakedret v1.0.0 // indirect
 	github.com/client9/misspell v0.3.4 // indirect
+	github.com/google/uuid v1.1.2
 	github.com/gordonklaus/ineffassign v0.0.0-20201107091007-3b93a8888063 // indirect
 	github.com/jgautheron/goconst v0.0.0-20201108215931-f8e4fe8351cd // indirect
 	github.com/jinzhu/gorm v1.9.16

@@ -8,16 +8,22 @@ import (
 	"Roam/Roam_backend/graph/model"
 	"context"
 	"fmt"
+
+	"github.com/google/uuid"
 )
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
+	//Generate a UUID for the user
+	id := uuid.New()
+	//Create our new user
 	newUser := model.User{
 		UserName:    input.UserName,
 		Password:    input.Password,
 		Email:       input.Email,
 		FirstName:   input.FirstName,
 		LastName:    input.LastName,
-		Description: input.Description}
+		Description: input.Description,
+		UUID:        id.String()}
 
 	r.DB.Create(&newUser)
 
