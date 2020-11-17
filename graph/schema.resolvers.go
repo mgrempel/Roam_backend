@@ -25,6 +25,8 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 		Description: input.Description,
 		UUID:        id.String()}
 
+	// TODO: Need to ensure an account doesn't exist already.
+
 	r.DB.Create(&newUser)
 
 	return &newUser, nil
@@ -43,6 +45,10 @@ func (r *queryResolver) GetUserByID(ctx context.Context, id int) (*model.User, e
 }
 
 func (r *queryResolver) GetUserByUUID(ctx context.Context, uuid string) (*model.User, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) LogIn(ctx context.Context, username string, password string) (*model.User, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

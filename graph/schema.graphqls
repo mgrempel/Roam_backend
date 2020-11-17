@@ -49,4 +49,5 @@ type Query {
   Posts(userId: Int!): [Post!]!
   GetUserById(id: Int!): User!
   GetUserByUUID(uuid: String!): User!
+  LogIn(username: String!, password:String!): User!
 }
