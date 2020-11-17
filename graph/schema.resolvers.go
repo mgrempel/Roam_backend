@@ -49,7 +49,10 @@ func (r *queryResolver) GetUserByUUID(ctx context.Context, uuid string) (*model.
 }
 
 func (r *queryResolver) LogIn(ctx context.Context, username string, password string) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
+	var user model.User
+	// TODO: Change this to use email as a sign in. Rescaffold for consistency
+	r.DB.Where("user_name = ?", username).Where("password = ?", password).Find(&user)
+	return &user, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
