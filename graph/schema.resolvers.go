@@ -37,10 +37,6 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) 
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) Posts(ctx context.Context, userID int) ([]*model.Post, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
 func (r *queryResolver) GetUserByID(ctx context.Context, id int) (*model.User, error) {
 	panic(fmt.Errorf("not implemented"))
 }
@@ -60,6 +56,18 @@ func (r *queryResolver) LogIn(ctx context.Context, username string, password str
 	return &user, nil
 }
 
+func (r *queryResolver) GetUserPostsByUUID(ctx context.Context, uuid string) ([]*model.Post, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) GetUserFriendPostsByUUID(ctx context.Context, uuid string) ([]*model.Post, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) GetUserFriendsByUUID(ctx context.Context, uuid string) ([]*model.User, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
@@ -68,3 +76,13 @@ func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *queryResolver) Posts(ctx context.Context, userID int) ([]*model.Post, error) {
+	panic(fmt.Errorf("not implemented"))
+}
