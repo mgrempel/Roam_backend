@@ -72,6 +72,7 @@ func (r *mutationResolver) AddFriendByID(ctx context.Context, uuid string, id in
 	//Add friends
 	r.DB.Model(&user).Association("Friends").Append(&friend)
 
+	utilities.ScrubUser(&friend)
 	return &friend, nil
 }
 
