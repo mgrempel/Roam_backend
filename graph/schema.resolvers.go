@@ -104,7 +104,24 @@ func (r *queryResolver) GetUserFriendPostsByUUID(ctx context.Context, uuid strin
 }
 
 func (r *queryResolver) GetUserFriendsByUUID(ctx context.Context, uuid string) ([]*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
+	var user model.User
+
+	//Get user's Id
+	err := r.DB.Where("uuid = ?", uuid).First(&user).Error
+	if err != nil {
+		return nil, fmt.Errorf("")
+	}
+
+	//Find the users friends
+	r.DB.Model(&user).Association("Friends").Find(&user.Friends)
+
+	for _, friend := range user.Friends {
+		//This isn't good, but for now I'll deal with the overhead.
+		r.DB.Model(&friend).Association("Posts").Find(&friend.Posts)
+		utilities.ScrubUser(friend)
+	}
+
+	return user.Friends, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
