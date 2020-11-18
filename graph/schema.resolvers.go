@@ -33,10 +33,9 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 	return &newUser, nil
 }
 
-func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost, uuid string) (*model.Post, error) {
-	//Get our user.
+func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) (*model.Post, error) {
 	var user model.User
-	err := r.DB.Where("uuid = ?", uuid).First(&user).Error
+	err := r.DB.Where("uuid = ?", input.UUID).First(&user).Error
 	if err != nil {
 		return nil, err
 	}
