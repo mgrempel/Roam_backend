@@ -5,7 +5,7 @@ package model
 type NewPost struct {
 	Title   string `json:"title"`
 	Content string `json:"content"`
-	UserID  int    `json:"UserId"`
+	UUID    string `json:"uuid"`
 }
 
 type NewUser struct {

@@ -37,12 +37,12 @@ input NewUser {
 input NewPost {
   title: String!
   content: String!
-  UserId: Int!
+  uuid: String!
 }
 
 type Mutation {
   createUser(input: NewUser!): User!
-  createPost(input: NewPost!): Post!
+  createPost(input: NewPost!, uuid: String!): Post!
 }
 
 type Query {

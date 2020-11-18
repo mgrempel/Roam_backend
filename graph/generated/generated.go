@@ -44,7 +44,7 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
-		CreatePost func(childComplexity int, input model.NewPost) int
+		CreatePost func(childComplexity int, input model.NewPost, uuid string) int
 		CreateUser func(childComplexity int, input model.NewUser) int
 	}
 
@@ -87,7 +87,7 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	CreateUser(ctx context.Context, input model.NewUser) (*model.User, error)
-	CreatePost(ctx context.Context, input model.NewPost) (*model.Post, error)
+	CreatePost(ctx context.Context, input model.NewPost, uuid string) (*model.Post, error)
 }
 type QueryResolver interface {
 	GetUserByID(ctx context.Context, id int) (*model.User, error)
@@ -123,7 +123,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreatePost(childComplexity, args["input"].(model.NewPost)), true
+		return e.complexity.Mutation.CreatePost(childComplexity, args["input"].(model.NewPost), args["uuid"].(string)), true
 
 	case "Mutation.createUser":
 		if e.complexity.Mutation.CreateUser == nil {
@@ -438,12 +438,12 @@ input NewUser {
 input NewPost {
   title: String!
   content: String!
-  UserId: Int!
+  uuid: String!
 }
 
 type Mutation {
   createUser(input: NewUser!): User!
-  createPost(input: NewPost!): Post!
+  createPost(input: NewPost!, uuid: String!): Post!
 }
 
 type Query {
@@ -474,6 +474,15 @@ func (ec *executionContext) field_Mutation_createPost_args(ctx context.Context, 
 		}
 	}
 	args["input"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["uuid"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("uuid"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["uuid"] = arg1
 	return args, nil
 }
 
@@ -711,7 +720,7 @@ func (ec *executionContext) _Mutation_createPost(ctx context.Context, field grap
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreatePost(rctx, args["input"].(model.NewPost))
+		return ec.resolvers.Mutation().CreatePost(rctx, args["input"].(model.NewPost), args["uuid"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2790,11 +2799,11 @@ func (ec *executionContext) unmarshalInputNewPost(ctx context.Context, obj inter
 			if err != nil {
 				return it, err
 			}
-		case "UserId":
+		case "uuid":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("UserId"))
-			it.UserID, err = ec.unmarshalNInt2int(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("uuid"))
+			it.UUID, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}

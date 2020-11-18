@@ -33,8 +33,23 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 	return &newUser, nil
 }
 
-func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) (*model.Post, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost, uuid string) (*model.Post, error) {
+	//Get our user.
+	var user model.User
+	err := r.DB.Where("uuid = ?", uuid).First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+
+	//Create a new post
+	post := model.Post{
+		Title:   input.Title,
+		Content: input.Content,
+		User:    &user}
+	//Update the database
+	r.DB.Create(&post)
+
+	return &post, nil
 }
 
 func (r *queryResolver) GetUserByID(ctx context.Context, id int) (*model.User, error) {
