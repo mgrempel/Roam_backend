@@ -13,6 +13,8 @@ import (
 	"github.com/google/uuid"
 )
 
+// TODO: Move finding a user by UUID logic off to helper class
+
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
 	//Generate a UUID for the user
 	id := uuid.New()
@@ -49,6 +51,28 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input model.NewPost) 
 	r.DB.Create(&post)
 
 	return &post, nil
+}
+
+func (r *mutationResolver) AddFriendByID(ctx context.Context, uuid string, id int) (*model.User, error) {
+	var user model.User
+	var friend model.User
+
+	//Find us
+	err := r.DB.Where("uuid = ?", uuid).First(&user).Error
+	if err != nil {
+		return nil, fmt.Errorf("Error finding user")
+	}
+
+	//Find the friend
+	err = r.DB.First(&friend, id).Error
+	if err != nil {
+		return nil, fmt.Errorf("Error locating friend")
+	}
+	// TODO: Implement a system for pending friend requests
+	//Add friends
+	r.DB.Model(&user).Association("Friends").Append(&friend)
+
+	return &friend, nil
 }
 
 func (r *queryResolver) GetUserByID(ctx context.Context, id int) (*model.User, error) {
