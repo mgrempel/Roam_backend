@@ -11,9 +11,9 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/joho/godotenv"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 const debug bool = false
@@ -61,25 +61,27 @@ func initDB(recreate bool, port string) *gorm.DB {
 
 	//Open up our database connection
 	var err error
-	db, err := gorm.Open("postgres", connectionString)
+	db, err := gorm.Open(postgres.Open(connectionString), &gorm.Config{})
 	if err != nil {
 		fmt.Println(err)
 		panic(err)
 	}
 
-	//Handle our migrations
-	if recreate {
-		db.LogMode(true)
+	db.AutoMigrate(&model.Post{}, &model.User{}, &model.NewsPost{})
 
-		db.DropTableIfExists("friendships")
-		db.DropTableIfExists(&model.Post{}, &model.User{}, &model.NewsPost{})
-		db.CreateTable(&model.User{}, &model.Post{}, &model.NewsPost{})
-		db.Model(&model.Post{}).AddForeignKey("user_id", "users(id)", "CASCADE", "RESTRICT")
-		db.Table("friendships").AddForeignKey("user_id", "users(id)", "CASCADE", "RESTRICT")
-		db.Table("friendships").AddForeignKey("friend_id", "users(id)", "CASCADE", "RESTRICT")
-	} else {
-		db.AutoMigrate(&model.Post{}, &model.User{}, &model.NewsPost{})
-	}
+	//Handle our migrations
+	// if recreate {
+	// 	db.LogMode(true)
+	//
+	// 	db.DropTableIfExists("friendships")
+	// 	db.DropTableIfExists(&model.Post{}, &model.User{}, &model.NewsPost{})
+	// 	db.CreateTable(&model.User{}, &model.Post{}, &model.NewsPost{})
+	// 	db.Model(&model.Post{}).AddForeignKey("user_id", "users(id)", "CASCADE", "RESTRICT")
+	// 	db.Table("friendships").AddForeignKey("user_id", "users(id)", "CASCADE", "RESTRICT")
+	// 	db.Table("friendships").AddForeignKey("friend_id", "users(id)", "CASCADE", "RESTRICT")
+	// } else {
+	//
+	// }
 
 	return db
 }
