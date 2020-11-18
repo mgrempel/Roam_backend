@@ -6,6 +6,7 @@ package graph
 import (
 	"Roam/Roam_backend/graph/generated"
 	"Roam/Roam_backend/graph/model"
+	"Roam/Roam_backend/graph/utilities"
 	"context"
 	"fmt"
 
@@ -45,14 +46,17 @@ func (r *queryResolver) GetUserByID(ctx context.Context, id int) (*model.User, e
 }
 
 func (r *queryResolver) GetUserByUUID(ctx context.Context, uuid string) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
+	var user model.User
+	r.DB.Where("uuid = ?", uuid).First(&user)
+	utilities.ScrubUser(&user)
+	return &user, nil
 }
 
 func (r *queryResolver) LogIn(ctx context.Context, username string, password string) (*model.User, error) {
 	var user model.User
 	// TODO: Change this to use email as a sign in. Rescaffold for consistency
 	r.DB.Where("user_name = ?", username).Where("password = ?", password).Find(&user)
-	user.Password = "Nice try."
+	utilities.ScrubUser(&user)
 	return &user, nil
 }
 
