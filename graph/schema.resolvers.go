@@ -91,7 +91,7 @@ func (r *queryResolver) LogIn(ctx context.Context, username string, password str
 	var user model.User
 	// TODO: Change this to use email as a sign in. Rescaffold for consistency
 	r.DB.Where("user_name = ?", username).Where("password = ?", password).Find(&user)
-	utilities.ScrubUser(&user)
+	user.Password = ""
 	return &user, nil
 }
 
