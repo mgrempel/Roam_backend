@@ -13,8 +13,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// TODO: Move finding a user by UUID logic off to helper class
-
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
 	//Generate a UUID for the user
 	id := uuid.New()
@@ -109,7 +107,7 @@ func (r *queryResolver) GetUserFriendsByUUID(ctx context.Context, uuid string) (
 	//Get user's Id
 	err := r.DB.Where("uuid = ?", uuid).First(&user).Error
 	if err != nil {
-		return nil, fmt.Errorf("")
+		return nil, fmt.Errorf("Error fetching user")
 	}
 
 	//Find the users friends
@@ -122,6 +120,19 @@ func (r *queryResolver) GetUserFriendsByUUID(ctx context.Context, uuid string) (
 	}
 
 	return user.Friends, nil
+}
+
+func (r *queryResolver) GetUserTreeByUUID(ctx context.Context, uuid string) (*model.User, error) {
+	var user model.User
+	err := r.DB.Where("uuid = ?", uuid).First(&user).Error
+	if err != nil {
+		return nil, fmt.Errorf("Error fetching user")
+	}
+	//Populate our posts
+	r.DB.Model(&user).Association("Posts").Find(&user.Posts)
+
+	utilities.ScrubUser(&user)
+	return &user, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

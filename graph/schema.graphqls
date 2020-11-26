@@ -53,4 +53,5 @@ type Query {
   GetUserPostsByUUID(uuid: String!): [Post!]!
   GetUserFriendPostsByUUID(uuid: String!): [Post!]!
   GetUserFriendsByUUID(uuid: String!): [User!]!
+  GetUserTreeByUUID(uuid: String!): User!
 }

@@ -69,6 +69,7 @@ type ComplexityRoot struct {
 		GetUserFriendPostsByUUID func(childComplexity int, uuid string) int
 		GetUserFriendsByUUID     func(childComplexity int, uuid string) int
 		GetUserPostsByUUID       func(childComplexity int, uuid string) int
+		GetUserTreeByUUID        func(childComplexity int, uuid string) int
 		LogIn                    func(childComplexity int, username string, password string) int
 	}
 
@@ -98,6 +99,7 @@ type QueryResolver interface {
 	GetUserPostsByUUID(ctx context.Context, uuid string) ([]*model.Post, error)
 	GetUserFriendPostsByUUID(ctx context.Context, uuid string) ([]*model.Post, error)
 	GetUserFriendsByUUID(ctx context.Context, uuid string) ([]*model.User, error)
+	GetUserTreeByUUID(ctx context.Context, uuid string) (*model.User, error)
 }
 
 type executableSchema struct {
@@ -266,6 +268,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetUserPostsByUUID(childComplexity, args["uuid"].(string)), true
+
+	case "Query.GetUserTreeByUUID":
+		if e.complexity.Query.GetUserTreeByUUID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_GetUserTreeByUUID_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetUserTreeByUUID(childComplexity, args["uuid"].(string)), true
 
 	case "Query.LogIn":
 		if e.complexity.Query.LogIn == nil {
@@ -468,6 +482,7 @@ type Query {
   GetUserPostsByUUID(uuid: String!): [Post!]!
   GetUserFriendPostsByUUID(uuid: String!): [Post!]!
   GetUserFriendsByUUID(uuid: String!): [User!]!
+  GetUserTreeByUUID(uuid: String!): User!
 }
 `, BuiltIn: false},
 }
@@ -592,6 +607,21 @@ func (ec *executionContext) field_Query_GetUserFriendsByUUID_args(ctx context.Co
 }
 
 func (ec *executionContext) field_Query_GetUserPostsByUUID_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["uuid"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("uuid"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["uuid"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_GetUserTreeByUUID_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -1339,6 +1369,48 @@ func (ec *executionContext) _Query_GetUserFriendsByUUID(ctx context.Context, fie
 	res := resTmp.([]*model.User)
 	fc.Result = res
 	return ec.marshalNUser2ᚕᚖRoamᚋRoam_backendᚋgraphᚋmodelᚐUserᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_GetUserTreeByUUID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_GetUserTreeByUUID_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetUserTreeByUUID(rctx, args["uuid"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖRoamᚋRoam_backendᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3172,6 +3244,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_GetUserFriendsByUUID(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "GetUserTreeByUUID":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_GetUserTreeByUUID(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
