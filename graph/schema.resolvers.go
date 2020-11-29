@@ -75,7 +75,13 @@ func (r *mutationResolver) AddFriendByID(ctx context.Context, uuid string, id in
 }
 
 func (r *queryResolver) GetUserByID(ctx context.Context, id int) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
+	var user model.User
+	err := r.DB.First(&user, id).Error
+	if err != nil {
+		return nil, fmt.Errorf("Error fetching user")
+	}
+	utilities.ScrubUser(&user)
+	return &user, nil
 }
 
 func (r *queryResolver) GetUserByUUID(ctx context.Context, uuid string) (*model.User, error) {
