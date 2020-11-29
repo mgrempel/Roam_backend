@@ -44,6 +44,7 @@ type Mutation {
   createUser(input: NewUser!): User!
   createPost(input: NewPost!): Post!
   addFriendById(uuid: String! id: Int!): User!
+  removeFriendById(uuid: String! id: Int!): User!
 }
 
 type Query {

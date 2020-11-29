@@ -74,6 +74,28 @@ func (r *mutationResolver) AddFriendByID(ctx context.Context, uuid string, id in
 	return &friend, nil
 }
 
+func (r *mutationResolver) RemoveFriendByID(ctx context.Context, uuid string, id int) (*model.User, error) {
+	var user model.User
+	var friend model.User
+
+	//Find us
+	err := r.DB.Where("uuid = ?", uuid).First(&user).Error
+	if err != nil {
+		return nil, fmt.Errorf("Error finding user")
+	}
+
+	//Find the friend
+	err = r.DB.First(&friend, id).Error
+	if err != nil {
+		return nil, fmt.Errorf("Error locating friend")
+	}
+
+	//Remove friends
+	r.DB.Model(&user).Association("Friends").Delete(&friend)
+
+	return &friend, nil
+}
+
 func (r *queryResolver) GetUserByID(ctx context.Context, id int) (*model.User, error) {
 	var user model.User
 	err := r.DB.First(&user, id).Error
