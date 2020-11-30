@@ -16,6 +16,13 @@ import (
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
 	//Generate a UUID for the user
 	id := uuid.New()
+
+	//Ensure username and password are populated
+
+	if input.UserName == "" || input.Password == "" {
+		return nil, fmt.Errorf("Invalid fields")
+	}
+
 	//Create our new user
 	newUser := model.User{
 		UserName:    input.UserName,
